@@ -1,0 +1,6 @@
+langchain
+openai
+qdrant-client
+dotenv
+ragas
+datasets
