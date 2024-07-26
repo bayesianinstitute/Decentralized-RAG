@@ -1,29 +1,47 @@
-## This Local Rag File
+## This Local and Decentralized  RAG File
 
+### Clone and Build
 
-Download and run
-First, download the latest Qdrant image from Dockerhub:
+Clone the repository and build the package locally:
+
+```bash
+python setup.py sdist bdist_wheel
+pip install .
+```
+
+### Download and Run Qdrant
+
+First, download the latest Qdrant image from Docker Hub:
 
 ```bash
 docker pull qdrant/qdrant
 ```
-Then, run the service:
+
+Then, run the Qdrant service:
+
 ```bash
 docker run -p 6333:6333 -p 6334:6334 \
     -v $(pwd)/qdrant_storage:/qdrant/storage:z \
     qdrant/qdrant
 ```
 
-Download and Install Lm Studio also download llama3 model and nomic text embedding model
+### Download and Install Dependencies
 
-#### Run APP
+- Download and install **LM Studio**.
+- Download the **Llama3 model**.
+- Download the **Nomic text embedding model**.
 
-CLI APP : 
+### Run the Application
+
+**CLI App:**
+
 ```bash
 python main.py
 ```
 
-Streamlit APP :
+**Streamlit App:**
+
 ```bash
 streamlit run app.py
 ```
+
