@@ -167,4 +167,7 @@ qdrant_storage;C
 
 *.png
 
-data/
+data*/
+
+tut/
+
