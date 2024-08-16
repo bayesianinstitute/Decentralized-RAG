@@ -1,13 +1,14 @@
-from openai import OpenAI
-from bayesrag.config import OPENAI_BASE_URL, OPENAI_API_KEY
 from bayesrag.utils import ClassificationResult
+import ollama
 
 import json
 
-client = OpenAI(base_url=OPENAI_BASE_URL, api_key=OPENAI_API_KEY)
+# from openai import OpenAI
+# from bayesrag.config import OPENAI_BASE_URL, OPENAI_API_KEY
+# client = OpenAI(base_url=OPENAI_BASE_URL, api_key=OPENAI_API_KEY)
 
 
-def generate_response(user_query, context):
+def generate_response(user_query, context,model='llama3:8b'):
     prompt_template = f""" You are a Lawyer. Response only related Law Question. do not use your knowledge use below context to get information
 
     Here is the question: {user_query}
@@ -17,19 +18,18 @@ def generate_response(user_query, context):
 
     system_prompt = "You are a helpful assistant that handles user queries and provides answers using the given context without external information."
 
-    completion = client.chat.completions.create(
-        model="lmstudio-community/Meta-Llama-3-8B-Instruct-GGUF",
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": prompt_template},
-        ],
-        temperature=0.7,
-        stream=True
-    )
+    response = ollama.chat(model=model, messages=[
+    {
+        "role": "system", "content": system_prompt,
+        'role': 'user',
+        'content': prompt_template,
+    },
+    
+    ],stream=True)
 
-    for chunk in completion:
-        if chunk.choices[0].delta.content is not None:
-            yield chunk.choices[0].delta.content
+    for chunk in response:
+        if chunk['message']['content'] is not None:
+            yield chunk['message']['content']
 
 
 def classify_query(user_query) -> ClassificationResult:
@@ -45,21 +45,22 @@ def classify_query(user_query) -> ClassificationResult:
         ClassificationResult.ERROR if there's an error parsing the response.
     """
 
-    system_prompt = f"""
-    You are a Lawyer. Classify the following question related to Law and always give response  in json format as "results":"yes/no" and not give any reason in reponse
+    system_prompt = """
+    You are a Lawyer. Classify the following question related to Law and always give a response in JSON format as {"results": "yes/no"} without giving any reason in the response.
     """
 
-    completion = client.chat.completions.create(
-        model="lmstudio-community/Meta-Llama-3-8B-Instruct-GGUF",
+    response = ollama.chat(
+        model='llama3:8b', 
         messages=[
             {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_query},
+            {"role": "user", "content": user_query}
         ],
-        temperature=1,
+        format="json",
     )
 
     # Parse the response into JSON
-    response_json = completion.choices[0].message.content
+    response_json = response['message']['content']
+    print(response_json)
     try:
         response_dict = json.loads(response_json)
         result = response_dict["results"].lower()
@@ -80,7 +81,8 @@ def classify_query(user_query) -> ClassificationResult:
 
 if __name__ == "__main__":
     
-    user_query = "hey how are you"
+    user_query = "how to get h1b visa"
+    
     
     result=classify_query(user_query)
 

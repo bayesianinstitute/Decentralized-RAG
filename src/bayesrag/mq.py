@@ -3,14 +3,17 @@ import time
 import json
 
 from bayesrag.retriever import get_context
-from bayesrag.constant import RECEVICE_TOPIC
+from bayesrag.constant import RECEVICE_TOPIC,AGG_RECEIVE_TOPIC,AGG_SEND_TOPIC
 import queue
 from loguru import logger
+
+
 class Mqttclient:
-    def __init__(self,collection_name, broker_address="mqtt.eclipseprojects.io", broker_port=1883,replyTopic="",):
+    def __init__(self,collection_name, broker_address="mqtt.eclipseprojects.io", broker_port=1883,replyTopic="USER_TOPIC-",isAdmin=False):
         self.broker_address = broker_address
         self.broker_port = broker_port
         self.replyTopic=replyTopic  # Topic to which the response will be sent.
+        self.ADMIN_NODE=isAdmin
         self.reply_queue = queue.Queue()
         self.client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
         self.client.on_connect = self.on_connect
@@ -23,6 +26,9 @@ class Mqttclient:
         print(f"Connected with result code {reason_code}")
         client.subscribe(RECEVICE_TOPIC)
         client.subscribe(self.replyTopic)
+        if self.ADMIN_NODE:
+            client.subscribe(AGG_RECEIVE_TOPIC)
+            
 
     def subscribe(self, topic):
         self.client.subscribe(topic)
@@ -32,6 +38,8 @@ class Mqttclient:
         print(msg.topic+" "+str(msg.payload))
         if msg.topic == self.replyTopic:
             self.handle_reply(msg.payload)  
+        elif msg.topic == AGG_SEND_TOPIC:
+            self.handle_vector_Message(msg.payload)
         else :
             self.handle_message(msg.payload)  # Call the function to handle the received message.
 
@@ -43,7 +51,32 @@ class Mqttclient:
         # Need Triggered Method so i can send it to receiver so he get reponse information
         self.reply_queue.put(data)
 
+    def handle_vector_Message(self, data):
+        data = json.loads(data)
+        print("Handle vector message")
+        print("-"*100)
+        source_embedding = [self.deserialize_record(record) for record in data.get("data")]
+        logger.info("received vector message", source_embedding)
+        # Process Vector Message
+        from bayesrag.vector_db import VectorDB
+        vectorDb = VectorDB(self.collection_name)
+        vectorDb.merge_embeddings(source_embedding)
+    
+    def deserialize_record(self, record):
+        # Convert each record back to the original format
+        from qdrant_client.models import Record
+        return Record(id=record['id'], payload=record['payload'], vector=record['vector'])
 
+
+    def serialize_record(self,record):
+        # Convert each record to a serializable format (dict)
+        return {
+            'id': record.id,
+            'payload': record.payload,
+            'vector': record.vector
+        }
+    
+    
     def handle_message(self,data):
         data = json.loads(data)
         replayTopic=data.get('replay_topic')
@@ -56,20 +89,63 @@ class Mqttclient:
 
     def send_message(self,send_topic,payload:dict):
         payload = json.dumps(payload)  # Convert the payload to JSON string before sending it.
-        self.client.publish(send_topic, payload)
+        self.client.publish(send_topic, payload,qos=2)
         logger.info(f"Sent message: {payload}")
     
+    def send_vector(self,scroll_result):
+        Vect_Data = [self.serialize_record(record) for record in scroll_result[0]]
+        data={"data":Vect_Data}
+        payload = json.dumps(data) 
+        self.client.publish(AGG_SEND_TOPIC,payload)
+        logger.info(f"Vector sent to admin: ")
+
+
     def stop(self):
-        self.client.loop_stop()
+        self.client.loop_stop()   
         self.client.disconnect()
 
-    
+
+
     
 if __name__ == "__main__":
-    client=Mqttclient("mqtt.eclipseprojects.io", 1883,)
+    import uuid
+    import argparse
 
-    for i in range(10):
-        client.send_message("Hello Send Node",{"id":"1"})
-        time.sleep(5) # wait 5 seconds before sending the next message
+    parser = argparse.ArgumentParser(description="Get node type information to send vector to admin")
+    parser.add_argument("--collectionName", type=str, required=True,help="Name of the collection of Vector DB")
+    parser.add_argument("--nodetype",type=str,help="Node Type")
+    args=parser.parse_args()
 
-    client.stop() # stop the MQTT client after 10 messages are sent.
+    
+    ID=uuid.uuid4()
+    REPLAY_TOPIC = f"USER_TOPIC-{ID}"
+    collections=args.collectionName
+    logger.info(f"Collection Name: {collections} ")
+
+    if args.nodetype:
+        client=Mqttclient(collection_name=collections,replyTopic=REPLAY_TOPIC,isAdmin=True)  
+    else:
+        client=Mqttclient(collection_name=collections,replyTopic=REPLAY_TOPIC,isAdmin=False)
+        QDRANT_HOST = "http://localhost:6333"  # Local Qdrant
+        from qdrant_client import QdrantClient
+
+        qclient = QdrantClient(url=QDRANT_HOST)
+
+        
+        ##TODO: 
+        # Need a function to  quite,send vector and  insert new based key like quit,send,insert (provide datalocation)
+    from bayesrag.utils import wait_for_commands
+    while True:
+            command = wait_for_commands()
+            if command == 'quit':
+                break
+            elif command == 'send':
+                scroll_result=qclient.scroll(collection_name=collections,with_vectors=True) 
+                client.send_vector(scroll_result)
+            elif command.startswith('insert '):
+                data_location = command.split(' ', 1)[1]
+                client.insert_new_data(data_location)
+
+    client.stop()
+    logger.info("MQTT client stopped.")
+
