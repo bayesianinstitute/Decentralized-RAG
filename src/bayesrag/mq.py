@@ -9,7 +9,7 @@ from loguru import logger
 
 
 class Mqttclient:
-    def __init__(self,collection_name, broker_address="mqtt.eclipseprojects.io", broker_port=1883,replyTopic="USER_TOPIC-",isAdmin=False):
+    def __init__(self, broker_address="mqtt.eclipseprojects.io", broker_port=1883,replyTopic="USER_TOPIC-",isAdmin=False):
         self.broker_address = broker_address
         self.broker_port = broker_port
         self.replyTopic=replyTopic  # Topic to which the response will be sent.
@@ -18,7 +18,6 @@ class Mqttclient:
         self.client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_message
-        self.collection_name=collection_name
         self.client.connect(self.broker_address, self.broker_port)
         self.client.loop_start()
 
@@ -59,7 +58,7 @@ class Mqttclient:
         logger.info("received vector message", source_embedding)
         # Process Vector Message
         from bayesrag.vector_db import VectorDB
-        vectorDb = VectorDB(self.collection_name)
+        vectorDb = VectorDB()
         vectorDb.merge_embeddings(source_embedding)
     
     def deserialize_record(self, record):
@@ -81,7 +80,7 @@ class Mqttclient:
         data = json.loads(data)
         replayTopic=data.get('replay_topic')
         query=data.get('query')
-        context,score=get_context(query,self.collection_name)
+        context,score=get_context(query)
         
         if context:
             data={"context":context,"score":score}

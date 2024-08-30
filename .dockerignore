@@ -163,7 +163,7 @@ artifacts/*
 
 logs
 
-qdrant_*
+qdrant_storage;C
 
 *.png
 
@@ -171,3 +171,6 @@ data*/
 
 tut/
 
+research/
+
+doc/

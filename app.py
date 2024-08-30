@@ -46,7 +46,7 @@ def main():
     with st.sidebar.expander("Actions", expanded=True):
         if st.button("Send Vector"):
             qclient = QdrantClient(url="http://localhost:6333")  # Update URL if needed
-            client = Mqttclient(collection_name=QDRANT_COLLECTION, replyTopic=f"USER_TOPIC-{ID}", isAdmin=False)
+            client = Mqttclient(replyTopic=f"USER_TOPIC-{ID}", isAdmin=False)
             scroll_result = qclient.scroll(collection_name=QDRANT_COLLECTION, with_vectors=True)
             client.send_vector(scroll_result)
             st.sidebar.success("Vector sent successfully.")
@@ -65,7 +65,7 @@ def main():
         with st.chat_message("user"):
             st.write(user_input)
         
-        result = get_context(user_input,collection_name=QDRANT_COLLECTION)
+        result = get_context(user_input)
 
         with st.chat_message("assistant"):
             response_container = st.empty()

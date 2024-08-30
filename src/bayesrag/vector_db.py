@@ -1,9 +1,9 @@
 from qdrant_client import QdrantClient, models
 from bayesrag.embedder import get_embedding
 from loguru import logger
-
+from bayesrag.config import QDRANT_HOST,QDRANT_COLLECTION
 class VectorDB:
-    def __init__(self, collection_name, qdrant_host="http://localhost:6333"):
+    def __init__(self, collection_name=QDRANT_COLLECTION, qdrant_host=QDRANT_HOST):
         self.collection_name = collection_name
         self.qclient = QdrantClient(url=qdrant_host)
 

@@ -1,15 +1,15 @@
 from bayesrag.embedder import get_embedding
 from bayesrag.vector_db import VectorDB
-# from bayesrag.config import QDRANT_COLLECTION, ID
-from bayesrag.constant import SEND_TOPIC
+# from bayesrag.config import QDRANT_COLLECTION
+# from bayesrag.constant import SEND_TOPIC
 import time
 import queue
 import uuid
 from loguru import logger
 
 
-def get_context(query,collection_name):
-    qclient=VectorDB(collection_name)
+def get_context(query):
+    qclient=VectorDB()
     
     query_embedding = get_embedding(query)
     results,score = qclient.search_vector(query_embedding)

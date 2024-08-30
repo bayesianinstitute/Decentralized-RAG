@@ -14,15 +14,18 @@ class ClassificationResult(Enum):
     NO = "no"
     ERROR = "error"
 
-def wait_for_commands():
-
+def display_commands():
     logger.info("Available commands:")
     print("1. 'quit' - Exit the application ")
     print("2. 'query' - Query from vector with LLM")
     print("3. 'send' - Send vector data")
     print("4. 'insert <data_location>' - Insert new data from the specified location")
+
+def wait_for_commands():
+    
     
     while True:
+        display_commands()
         command = input("\nEnter your command: ").strip().lower()
         
         if command == 'quit':

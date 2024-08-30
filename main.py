@@ -7,29 +7,25 @@ from bayesrag.retriever import get_context
 from bayesrag.generator import generate_response,classify_query
 from bayesrag.utils import ClassificationResult
 from bayesrag.evaluator import evaluate_response
+from bayesrag.config import QDRANT_HOST,QDRANT_COLLECTION,REPLAY_TOPIC
 
 from bayesrag.mq import Mqttclient
 from qdrant_client import QdrantClient
 from bayesrag.utils import wait_for_commands
-import uuid
+
 from loguru import logger
-import warnings
-from cryptography.utils import CryptographyDeprecationWarning
-
-warnings.filterwarnings("ignore", category=CryptographyDeprecationWarning, message="ARC4 has been moved to cryptography.hazmat.decrepit.ciphers.algorithms.ARC4 and will be removed from this module in 48.0.0.")
 
 
 
-ID=uuid.uuid4()
-REPLAY_TOPIC = f"USER_TOPIC-{ID}"
-QDRANT_COLLECTION=f"law_doc-{ID}"
-QDRANT_HOST = "http://localhost:6333"  # Local Qdrant
+
+
+logger.debug(f"QDRANT_HOST: {QDRANT_HOST}", )
 
 def query():
     user_query = input("Enter your query or type 'q' to quit: ")
 
     while user_query.lower() != "q":
-        relevant_context = get_context(user_query,collection_name=QDRANT_COLLECTION)
+        relevant_context = get_context(user_query)
         print("-" * 100)
         # TODO 
         # Query classification
@@ -66,9 +62,9 @@ def main():
 
 
     if args.nodetype:
-        client=Mqttclient(collection_name=QDRANT_COLLECTION,replyTopic=REPLAY_TOPIC,isAdmin=True)  
+        client=Mqttclient(replyTopic=REPLAY_TOPIC,isAdmin=True)  
     else:
-        client=Mqttclient(collection_name=QDRANT_COLLECTION,replyTopic=REPLAY_TOPIC,isAdmin=False)
+        client=Mqttclient(replyTopic=REPLAY_TOPIC,isAdmin=False)
 
     qclient = QdrantClient(url=QDRANT_HOST)
     if args.data_dir:
@@ -91,6 +87,7 @@ def main():
                 data_location = command.split(' ', 1)[1]
                 insertData(data_location,QDRANT_COLLECTION)
                 logger.info("insertData completed successfully.")
+
 
     client.stop()
     logger.info("MQTT client stopped.")            

@@ -10,3 +10,5 @@ OPENAI_API_KEY = "lm-studio"
 QDRANT_HOST = os.getenv("QDRANT_HOST", "http://localhost:6333")
 ID=uuid.uuid4()
 QDRANT_COLLECTION = os.getenv("QDRANT_COLLECTION", f"law_doc-{ID}")
+REPLAY_TOPIC = f"USER_TOPIC-{ID}"
+QDRANT_COLLECTION=f"law_doc-{ID}"

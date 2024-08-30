@@ -1,6 +1,9 @@
-langchain
-openai
-qdrant-client
-dotenv
+langchain==0.2.15
+paho-mqtt==2.1.0
+openai==1.42.0
+qdrant-client==1.11.1
+loguru==0.7.2
+python-dotenv==1.0.1
 ragas
-datasets
+datasets==2.21.0
+ollama==0.3.2
