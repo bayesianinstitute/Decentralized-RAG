@@ -1,6 +1,3 @@
-Here's the updated README with the requested changes:
-
-
 ## Local Decentralized RAG File
 
 This repository houses a demo application for local and decentralized Retrieval Augmented Generation (RAG). The project allows users to interact with both local knowledge bases and contribute to a shared, global knowledge .
