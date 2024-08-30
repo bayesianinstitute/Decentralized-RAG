@@ -1,6 +1,6 @@
 Here's the updated README with the requested changes:
 
-```markdown
+
 ## Local Decentralized RAG File
 
 This repository houses a demo application for local and decentralized Retrieval Augmented Generation (RAG). The project allows users to interact with both local knowledge bases and contribute to a shared, global knowledge .
@@ -87,6 +87,3 @@ pip install .
 ## References
 
 Ollama Docker hub: [https://hub.docker.com/r/ollama/ollama](https://hub.docker.com/r/ollama/ollama)
-```
-
-Let me know if there's anything else you’d like to adjust!
