@@ -1,28 +1,32 @@
 version: '3.8'
 
 services:
-  qdrant:
-    image: qdrant/qdrant:latest
-    container_name: qdrantt
-    network_mode: host 
-    ports:
-      - "6333:6333"
-      - "6334:6334"
-    volumes:
-      - ./qdrant_storage:/qdrant/storage
+  # qdrant:
+  #   image: qdrant/qdrant:latest
+  #   container_name: qdrantt
+  #   network_mode: host 
+  #   ports:
+  #     - "6333:6333"
+  #     - "6334:6334"
+  #   volumes:
+  #     - ./qdrant_storage:/qdrant/storage
 
-  bayesrag:
-    build: .
-    container_name: bayesrag_cont
-    stdin_open: true
-    tty: true
-    depends_on:
-      - qdrant
-    environment:
-      - DATA_DIR=/data
-      - NODETYPE=admin
-      - QDRANT_HOST=http://localhost:6333  
-    network_mode: host 
+  # bayesrag:
+  #   build: .
+  #   container_name: bayesrag_cont
+  #   stdin_open: true
+  #   tty: true
+  #   depends_on:
+  #     - qdrant
+  #   environment:
+  #     - DATA_DIR=/data
+  #     - NODETYPE=admin
+  #     - QDRANT_HOST=http://localhost:6333  
+  #   volumes:
+  #     - ./data:/data
+  #   network_mode: host 
+
+
 
   ollama:
     image: ollama/ollama:latest

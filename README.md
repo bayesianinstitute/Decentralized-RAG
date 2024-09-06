@@ -43,6 +43,8 @@ pip install .
    ```
    This command starts a Qdrant instance and maps the necessary ports. It also mounts a local directory (`qdrant_storage`) to persist the database.
 
+IN WINDOWS:
+docker run -d --name qdrant_container -p 6333:6333 -p 6334:6334 -v C:/Users/faiza/Music/llmResearch/rag/qdrant_data:/qdrant/storage qdrant/qdrant:latest
 ### Dependencies
 
 1. **Ollama:**
@@ -84,3 +86,14 @@ pip install .
 ## References
 
 Ollama Docker hub: [https://hub.docker.com/r/ollama/ollama](https://hub.docker.com/r/ollama/ollama)
+
+
+### IPFS 
+   https://docs.ipfs.tech/install/command-line/#system-requirements
+
+   wget https://dist.ipfs.tech/kubo/v0.23.0/kubo_v0.23.0_windows-amd64.zip -Outfile kubo_v0.23.0.zip
+
+   Expand-Archive -Path kubo_v0.23.0.zip -DestinationPath .\kubo
+
+   cd .\kubo
+   .\install.bat

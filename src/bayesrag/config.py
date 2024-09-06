@@ -12,3 +12,16 @@ ID=uuid.uuid4()
 QDRANT_COLLECTION = os.getenv("QDRANT_COLLECTION", f"law_doc-{ID}")
 REPLAY_TOPIC = f"USER_TOPIC-{ID}"
 QDRANT_COLLECTION=f"law_doc-{ID}"
+
+
+# IPFS Config
+
+IPFS_RETRY_LIMIT = 3
+IPFS_RETRY_DELAY = 5
+
+## Directory for IPFS
+directory_path = "./qdrant_data/collections/global_data"
+zip_file_path = "./qdrant_data_backup.zip"
+
+download_path = "./zipdownloaded_files/qdrant_data_backup.zip"
+extract_to_path = "./qdrant_data/collections/global_data"
