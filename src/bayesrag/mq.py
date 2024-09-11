@@ -4,6 +4,8 @@ import json
 
 from bayesrag.retriever import get_context
 from bayesrag.constant import RECEVICE_TOPIC,AGG_RECEIVE_TOPIC,AGG_SEND_TOPIC
+
+from bayesrag.ipfs import IPFSManager
 import queue
 from loguru import logger
 
@@ -14,12 +16,14 @@ class Mqttclient:
         self.broker_port = broker_port
         self.replyTopic=replyTopic  # Topic to which the response will be sent.
         self.ADMIN_NODE=isAdmin
+        self.ipfs=IPFSManager()
         self.reply_queue = queue.Queue()
         self.client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_message
         self.client.connect(self.broker_address, self.broker_port)
         self.client.loop_start()
+        
 
     def on_connect(self,client, userdata, flags, reason_code, properties):
         print(f"Connected with result code {reason_code}")
@@ -60,6 +64,12 @@ class Mqttclient:
         from bayesrag.vector_db import VectorDB
         vectorDb = VectorDB()
         vectorDb.merge_embeddings(source_embedding)
+        
+        directory_path=f"./qdrant_data/collections/{vectorDb.collection_name}"
+        
+        # Upload to IPFS
+        self.ipfs.upload_directory(directory_path)
+
     
     def deserialize_record(self, record):
         # Convert each record back to the original format

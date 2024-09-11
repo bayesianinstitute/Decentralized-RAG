@@ -61,7 +61,7 @@ def main():
     args = parser.parse_args()
 
 
-    if args.nodetype:
+    if args.nodetype is not None and args.nodetype.lower() == "admin":
         client=Mqttclient(replyTopic=REPLAY_TOPIC,isAdmin=True)  
     else:
         client=Mqttclient(replyTopic=REPLAY_TOPIC,isAdmin=False)

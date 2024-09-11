@@ -8,3 +8,4 @@ ragas
 datasets==2.21.0
 ollama==0.3.2
 ipfshttpclient==0.7.0
+pypdf==4.3.1

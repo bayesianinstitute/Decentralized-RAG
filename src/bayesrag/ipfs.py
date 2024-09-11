@@ -7,10 +7,12 @@ from bayesrag.config import download_path, extract_to_path, directory_path, zip_
 
 
 class IPFSManager:
-    def __init__(self, ipfs_address='/ip4/127.0.0.1/tcp/5001/http', retry_limit=IPFS_RETRY_LIMIT, retry_delay=IPFS_RETRY_DELAY):
+    def __init__(self, ipfs_address=None, retry_limit=IPFS_RETRY_LIMIT, retry_delay=IPFS_RETRY_DELAY):
+
+        self.ipfs_address = ipfs_address or os.getenv('IPFS_ADDRESS', '/ip4/127.0.0.1/tcp/5001/http')
         self.retry_limit = retry_limit
         self.retry_delay = retry_delay
-        self.client = self._connect_to_ipfs(ipfs_address)
+        self.client = self._connect_to_ipfs(self.ipfs_address)
     
     def _connect_to_ipfs(self, ipfs_address):
         """Connect to the IPFS client with retry logic."""
@@ -66,7 +68,7 @@ class IPFSManager:
             logger.error(f"Error while unzipping file: {e}")
             raise
 
-    def upload_directory(self, directory_path):
+    def upload_directory(self, directory_path=directory_path):
         """Automatically zip and upload a directory to IPFS."""
         logger.info(f"Zipping and uploading directory: {directory_path}")
         try:
