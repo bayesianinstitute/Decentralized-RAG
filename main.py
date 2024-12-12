@@ -6,13 +6,12 @@ from bayesrag.vector_db import  VectorDB
 from bayesrag.retriever import get_context
 from bayesrag.generator import generate_response,classify_query
 from bayesrag.utils import ClassificationResult
-from bayesrag.evaluator import evaluate_response
+from bayesrag.evaluator import deepEvalutor
 from bayesrag.config import QDRANT_HOST,QDRANT_COLLECTION,REPLAY_TOPIC
 
 from bayesrag.mq import Mqttclient
 from qdrant_client import QdrantClient
 from bayesrag.utils import wait_for_commands
-
 from loguru import logger
 
 
@@ -37,10 +36,20 @@ def query():
         #     print("-" * 100)
         # else:
         #     relevant_context = None
-
+        response_text = ""
         for text in generate_response(user_query, relevant_context):
             print(text, end=" ")
+            response_text += text
+        # Prompt the user to decide if evaluation is needed
+        is_evaluator = input("\nDo you need evaluation? (Y/N): ").strip().lower()
 
+        if is_evaluator == 'y':
+            evaluator: dict = deepEvalutor(user_query,response_text,[relevant_context])  # Assuming this function returns a dictionary with score and reason
+            print(f"Score: {evaluator['score']}\nReason: {evaluator['reason']}")
+        elif is_evaluator == 'n':
+            print("Evaluation skipped.")
+        else:
+            print("Invalid input. Please enter 'Y' or 'N'.")
         user_query = input("\nEnter your query or type 'q' to quit: ")
 
 def insertData(DATA_DIR,QDRANT_COLLECTION):
