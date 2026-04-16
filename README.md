@@ -55,7 +55,7 @@ The core difference lies in **centralization vs decentralization**.
 
 ### DRAG
 
-![DRAG](./doc/drags.JPG)
+![DRAG](./doc/drags_fig.png)
 *Decentralized architecture with multiple nodes contributing to a global knowledge base*
 
 ---
