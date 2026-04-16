@@ -1,6 +1,6 @@
 # Decentralized Retrieval-Augmented Generation (DRAG)
 
-![DRAG](./doc/drags.JPG)
+![DRAG](./doc/drags_fig.png)
 
 This repository presents a decentralized extension of Retrieval-Augmented Generation (RAG), addressing privacy, scalability, and security challenges in traditional RAG systems using IPFS, MQTT, and blockchain technologies.
 
