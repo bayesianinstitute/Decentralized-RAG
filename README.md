@@ -1,125 +1,195 @@
 # Decentralized Retrieval-Augmented Generation (DRAG)
 
 ![DRAG](./doc/drags.JPG)
-This repository presents a decentralized extension of Retrieval-Augmented Generation (RAG), addressing privacy, scalability, and security issues of traditional RAG systems using IPFS, MQTT, and blockchain. DRAG enables users to interact with local knowledge bases and contribute to a global, shared database, promoting knowledge democratization and incentivizing participation.
 
-## DRAG Overview
+This repository presents a decentralized extension of Retrieval-Augmented Generation (RAG), addressing privacy, scalability, and security challenges in traditional RAG systems using IPFS, MQTT, and blockchain technologies.
 
-DRAG improves RAG by decentralizing storage, communication, and processing, ensuring:
+This work is grounded in our research on decentralized learning systems, particularly **Decentralized Retrieval-Augmented Generation (DRAG)**, as presented in [3].
 
-- **Privacy**: Secure, decentralized data storage with IPFS.
-- **Scalability**: Global knowledge contributions without central authority.
-- **Security**: Blockchain for transparency and safe record-keeping, with rewards for contributors.
-- **Collaborative Learning**: Continuous improvement from distributed nodes.
+DRAG enables users to interact with local knowledge bases while contributing to a global shared database—promoting **knowledge democratization**, **trustless collaboration**, and **incentivized participation**.
 
-### Key Technologies:
-- **IPFS** for decentralized storage.
-- **MQTT** for low-latency communication.
-- **Blockchain** for secure record-keeping.
-- **Qdrant** for vector database storage and retrieval.
+---
 
+## 📄 Research Publication
 
+This repository is based on our published research work:
 
-## Traditional RAG vs. DRAG
+**Continuous Learning in Decentralized Retrieval-Augmented Generation (DRAG) and Data Management**
+F. A. Khan, C. Peiper, A. Jaberzadeh, M. A. Shaikh, et al.
+*Proceedings of the 4th Blockchain and Cryptocurrency Conference (B2C'25)*, 2025, pp. 45–48
 
-The main difference between traditional RAG and DRAG is the decentralization. In DRAG, multiple nodes contribute knowledge, while traditional RAG relies on a centralized approach. Below is a visual comparison:
+🔗 Read the paper:
+[https://www.researchgate.net/profile/Sergey-Yurish/publication/398276090_Blockchain_and_Cryptocurrency_B2C'_2025_Edited_by_Sergey_Y_Yurish/links/6930219f0e91876082c0d022/Blockchain-and-Cryptocurrency-B2C-2025-Edited-by-Sergey-Y-Yurish.pdf#page=46](https://www.researchgate.net/profile/Sergey-Yurish/publication/398276090_Blockchain_and_Cryptocurrency_B2C'_2025_Edited_by_Sergey_Y_Yurish/links/6930219f0e91876082c0d022/Blockchain-and-Cryptocurrency-B2C-2025-Edited-by-Sergey-Y-Yurish.pdf#page=46)
+
+---
+
+## 🚀 DRAG Overview
+
+DRAG enhances traditional RAG by decentralizing storage, communication, and computation layers, ensuring:
+
+* **Privacy** → Secure, decentralized data storage using IPFS
+* **Scalability** → Distributed knowledge contribution without central bottlenecks
+* **Security** → Blockchain-backed transparency and tamper-proof records
+* **Incentivization** → Reward mechanisms for contributors
+* **Collaborative Learning** → Continuous improvement from distributed nodes
+
+---
+
+## 🧠 Key Technologies
+
+* **IPFS** → Decentralized storage layer
+* **MQTT** → Lightweight, low-latency communication protocol
+* **Blockchain** → Trustless validation and reward system
+* **Qdrant** → High-performance vector database for semantic retrieval
+
+---
+
+## ⚖️ Traditional RAG vs. DRAG
+
+The core difference lies in **centralization vs decentralization**.
+
+### Traditional RAG
 
 ![Traditional RAG](./doc/rag.png)
-*Traditional RAG: Centralized architecture with a single knowledge base.*
+*Centralized architecture with a single knowledge base*
+
+### DRAG
 
 ![DRAG](./doc/drags.JPG)
-*DRAG: Decentralized architecture with multiple nodes contributing to a global knowledge base.*
+*Decentralized architecture with multiple nodes contributing to a global knowledge base*
 
-## Architecture
+---
 
-The system consists of two types of nodes:
+## 🏗️ Architecture
 
-1. **Data Nodes**: Provide domain-specific knowledge to the global vector database.
-2. **Evaluator Nodes**: Verify contributions and ensure the integrity of the global database.
+The system consists of two primary node types:
 
-The framework incorporates a **blockchain-based reward system** that incentivizes nodes for their contributions, improving both system accuracy and knowledge sharing.
+### 1. Data Nodes
 
-## Setup and Installation
+* Provide domain-specific knowledge
+* Generate embeddings and contribute to the global vector database
 
-### Clone and Build
+### 2. Evaluator Nodes
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/bayesianinstitute/Decentralized-RAG
-   cd Decentralized-RAG 
-   ```
+* Validate incoming contributions
+* Maintain data quality and integrity
 
-2. Build the package:
-   ```bash
-   python setup.py sdist bdist_wheel
-   pip install .
-   ```
+---
 
-### Running in Docker Container
+### 🔗 Blockchain-Based Incentive Layer
 
-Run all services:
+* Records contributions transparently
+* Rewards high-quality data providers
+* Penalizes malicious or low-quality inputs
+
+This mechanism ensures:
+
+* Higher data reliability
+* Sustainable ecosystem growth
+* Trustless collaboration
+
+---
+
+## ⚙️ Setup and Installation
+
+### 1. Clone and Build
+
+```bash
+git clone https://github.com/bayesianinstitute/Decentralized-RAG
+cd Decentralized-RAG
+```
+
+```bash
+python setup.py sdist bdist_wheel
+pip install .
+```
+
+---
+
+### 2. Run Using Docker
+
+Start all services:
+
 ```bash
 docker compose up -d
 ```
 
-Download the model and start the application:
+Download model and run:
+
 ```bash
 bash run.sh
 ```
 
-### Setting up Qdrant (Vector Database)
+---
 
-1. **Download Qdrant Image**:
-   ```bash
-   docker pull qdrant/qdrant
-   ```
+## 🧩 Qdrant Setup (Vector Database)
 
-2. **Run Qdrant**:
-   ```bash
-   docker run -d -p 6333:6333 -p 6334:6334 \
-       -v ./qdrant_data:/qdrant/storage \
-       qdrant/qdrant
-   ```
-   For Windows:
-   ```bash
-   docker run -d --name qdrant_container -p 6333:6333 -p 6334:6334 \
-       -v C:/path/to/qdrant_data:/qdrant/storage \
-       qdrant/qdrant:latest
-   ```
+### Pull Image
 
-### Setting up Dependencies
+```bash
+docker pull qdrant/qdrant
+```
 
-1. **Ollama**: Install Ollama by following the instructions on [Ollama's website](https://ollama.ai/).
+### Run Container
 
-2. **Language Model**: Pull a language model from the Ollama library:
-   ```bash
-   ollama pull llama3:8b
-   ```
+```bash
+docker run -d -p 6333:6333 -p 6334:6334 \
+    -v ./qdrant_data:/qdrant/storage \
+    qdrant/qdrant
+```
 
-3. **Text Embedding Model**:
-   ```bash
-   ollama pull nomic-embed-text:latest
-   ```
+### Windows:
 
-4. Install required Python libraries (e.g., `qdrant-client`).
+```bash
+docker run -d --name qdrant_container -p 6333:6333 -p 6334:6334 \
+    -v C:/path/to/qdrant_data:/qdrant/storage \
+    qdrant/qdrant:latest
+```
 
-### Running the Application
+---
 
-1. **Configure Node Type**:  
-   Edit `main.py` to specify the node type:
-   - `admin`: Institute Node (manages the global embedding)
-   - `data`: Data Node (contributes specialized knowledge)
+## 🤖 Model Setup
 
-2. **Start the Application**:
-   ```bash
-   python main.py --data-dir data --nodetype admin
-   ```
+### Install Ollama
 
-   Replace `data` with the desired data directory. Set `--nodetype` to either `admin` or `data`.
+Follow: [https://ollama.ai/](https://ollama.ai/)
 
-### IPFS Installation
+### Pull LLM
 
-To set up IPFS for decentralized storage, follow the installation instructions from [IPFS Documentation](https://docs.ipfs.tech/install/command-line/#system-requirements) or use the following commands for Windows:
+```bash
+ollama pull llama3:8b
+```
+
+### Pull Embedding Model
+
+```bash
+ollama pull nomic-embed-text:latest
+```
+
+---
+
+## ▶️ Running the Application
+
+### Configure Node Type
+
+Edit `main.py`:
+
+* `admin` → Global coordinator node
+* `data` → Knowledge contributor node
+
+### Start Application
+
+```bash
+python main.py --data-dir data --nodetype admin
+```
+
+---
+
+## 🌐 IPFS Installation
+
+Follow official docs: [https://docs.ipfs.tech/install/](https://docs.ipfs.tech/install/)
+
+### Windows Example:
 
 ```bash
 wget https://dist.ipfs.tech/kubo/v0.23.0/kubo_v0.23.0_windows-amd64.zip -Outfile kubo_v0.23.0.zip
@@ -128,12 +198,35 @@ cd .\kubo
 .\install.bat
 ```
 
-## Conclusion
+---
 
-This framework showcases the potential of decentralized systems in enhancing RAG applications by reducing retrieval errors, preserving privacy, and fostering continuous, collaborative learning. By leveraging blockchain technology, it ensures secure and transparent record-keeping, while rewarding participants for their contributions. For a complete implementation, visit our GitHub repository: [Decentralized RAG GitHub](https://github.com/bayesianinstitute/Decentralized-RAG).
+## 📌 Conclusion
 
-## References
+DRAG demonstrates how decentralized architectures can significantly enhance Retrieval-Augmented Generation systems by:
 
-- Ollama Docker Hub: [https://hub.docker.com/r/ollama/ollama](https://hub.docker.com/r/ollama/ollama)
-- IPFS Documentation: [https://docs.ipfs.tech](https://docs.ipfs.tech)
+* Reducing hallucination and retrieval errors
+* Preserving user privacy
+* Enabling continuous decentralized learning
+* Incentivizing high-quality knowledge contributions
 
+By integrating **blockchain, distributed storage, and vector search**, DRAG provides a scalable and secure foundation for next-generation AI systems.
+
+---
+
+## 🔗 Repository
+
+GitHub:
+[https://github.com/bayesianinstitute/Decentralized-RAG](https://github.com/bayesianinstitute/Decentralized-RAG)
+
+---
+
+## 📚 References
+
+[1] Ollama Docker Hub: [https://hub.docker.com/r/ollama/ollama](https://hub.docker.com/r/ollama/ollama)
+[2] IPFS Documentation: [https://docs.ipfs.tech](https://docs.ipfs.tech)
+
+[3] F. A. Khan, C. Peiper, A. Jaberzadeh, M. A. Shaikh, et al.,
+"Continuous learning in decentralized retrieval-augmented generation (DRAG) and data management,"
+in *Proceedings of the 4th Blockchain and Cryptocurrency Conference (B2C'25)*, 2025, pp. 45–48.
+Available:
+[https://www.researchgate.net/profile/Sergey-Yurish/publication/398276090_Blockchain_and_Cryptocurrency_B2C'_2025_Edited_by_Sergey_Y_Yurish/links/6930219f0e91876082c0d022/Blockchain-and-Cryptocurrency-B2C-2025-Edited-by-Sergey-Y-Yurish.pdf#page=46](https://www.researchgate.net/profile/Sergey-Yurish/publication/398276090_Blockchain_and_Cryptocurrency_B2C'_2025_Edited_by_Sergey_Y_Yurish/links/6930219f0e91876082c0d022/Blockchain-and-Cryptocurrency-B2C-2025-Edited-by-Sergey-Y-Yurish.pdf#page=46)
